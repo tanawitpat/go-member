@@ -22,7 +22,7 @@ Create customer's profile.
 | **last_name** | Last name  | string | Required |
 | **mobile_number** | Mobile number  | string | Required |
 | **email** | Email | string | Required |
-| **address** | Address | JSON object | Required |
+| **address** | Address | Address object | Required |
 
 #### Address object
 | Parameters | Description | Values | Remark |
@@ -104,7 +104,7 @@ Update customer's profile.
 | **last_name** | Last name  | string | Optional |
 | **mobile_number** | Mobile number  | string | Optional |
 | **email** | Email | string | Optional |
-| **address** | Address | JSON object | Optional |
+| **address** | Address | Address object | Optional |
 
 #### Address object
 | Parameters | Description | Values | Remark |
