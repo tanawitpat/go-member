@@ -2,18 +2,17 @@
 
 | Method Name | HTTP Method | Path | Summary |
 | :--- | :---: | :--- | :--- |
-| CreateAccount | `POST` | /customer | Create customer's profile |
-| UpdateAccount | `PUT` | /customer | Update customer's profile |
-| InquiryAccount | `GET` | /customer/<customer_id> | Inquiry customer's profile by customer_id |
+| CreateMemberAccount | `POST` | /member | Create customer's profile |
+| UpdateMemberAccount | `PUT` | /member | Update customer's profile |
+| InquiryMemberAccount | `GET` | /member/<customer_id> | Inquiry customer's profile by customer_id |
 
-
-## CreateAccount
+## CreateMemberAccount
 
 ### Description
 Create customer's profile.
 
 ### URL
-> POST /customer
+> POST /member
 
 ### Parameters
 | Parameters | Description | Values | Remark |
@@ -88,13 +87,13 @@ return value
 }
 ```
 
-## UpdateAccount
+## UpdateMemberAccount
 
 ### Description
 Update customer's profile.
 
 ### URL
-> PUT /customer
+> PUT /member
 
 ### Parameters
 | Parameters | Description | Values | Remark |
@@ -158,13 +157,13 @@ return value
 }
 ```
 
-## InquiryAccount
+## InquiryMemberAccount
 
 ### Description
 Inquiry customer's profile.
 
 ### URL
-> GET /customer/<customer_id>
+> GET /member/<customer_id>
 
 ### Parameters
 | Parameters | Description | Values | Remark |
