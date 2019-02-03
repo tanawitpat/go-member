@@ -64,7 +64,7 @@ return value
 {
     "status": "SUCCEEDED",
     "customer_id": "1",
-    "account_status": "PENDING-OTP"
+    "account_status": "ACTIVE"
 }
 
 > Fail response
