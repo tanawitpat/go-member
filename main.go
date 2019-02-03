@@ -1,7 +1,8 @@
 package main
 
 import (
-	"go-member/internal/src/pingpong"
+	"go-member/internal/pkg/member"
+	"go-member/internal/pkg/pingpong"
 	"log"
 	"net/http"
 
@@ -13,6 +14,8 @@ func main() {
 
 	router.HandleFunc("/ping", pingpong.PingPong).Methods("GET")
 	router.HandleFunc("/ping", pingpong.PingPongPost).Methods("POST")
+
+	router.HandleFunc("/member", member.CreateMemberAccount).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(":8050", router))
 }
