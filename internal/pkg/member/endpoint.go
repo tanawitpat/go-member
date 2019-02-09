@@ -1,6 +1,7 @@
 package member
 
 import (
+	"go-member/internal/app"
 	"log"
 	"net/http"
 
@@ -27,7 +28,6 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		log.Printf("NULL - Response: %+v", res)
 		return
 	}
-	log.Printf("%s - Request: %+v", requestID, req)
 
 	if err := render.DecodeJSON(r.Body, &req); err != nil {
 		log.Printf("Cannot decode json")
@@ -39,6 +39,21 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, res)
 		log.Printf("%s - Response: %#v", requestID, res)
+		return
+	}
+	log.Printf("%s - Request: %+v", requestID, req)
+
+	db, err := app.GetMongoSession()
+	if err != nil {
+		log.Printf("%+v", err)
+		res.Status = statusFail
+		res.Error = &Error{
+			Name:    responseNameInternalServerError,
+			Details: responseError.Details,
+		}
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, res)
+		log.Printf("%s - Response: %+v", requestID, res)
 		return
 	}
 
@@ -55,7 +70,31 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res.Status = statusSuccess
+	member := Member{
+		CustomerID:   "1",
+		FirstName:    req.FirstName,
+		LastName:     req.LastName,
+		Email:        req.Email,
+		MobileNumber: req.MobileNumber,
+		Address: Address{
+			StreetAddress: req.Address.StreetAddress,
+			Subdistrict:   req.Address.Subdistrict,
+			District:      req.Address.District,
+			Province:      req.Address.Province,
+			PostalCode:    req.Address.PostalCode,
+		},
+		AccountStatus: "ACTIVE",
+	}
+
+	if err := db.C("member").Insert(member); err != nil {
+		log.Printf("%+v", err)
+	}
+
+	res = CreateMemberAccountResponse{
+		Status:        statusSuccess,
+		CustomerID:    member.CustomerID,
+		AccountStatus: member.AccountStatus,
+	}
 	render.Status(r, http.StatusCreated)
 	render.JSON(w, r, res)
 	log.Printf("%s - Response: %+v", requestID, res)

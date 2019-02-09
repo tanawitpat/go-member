@@ -22,7 +22,6 @@ pipeline {
         }
         stage("DEPLOY") {
             steps {
-                sh "docker container rm -f go-member"
                 sh """
                 docker run --rm -d --network go-member --name go-member \
                 -p 45000:8050 \
