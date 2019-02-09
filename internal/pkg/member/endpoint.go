@@ -15,7 +15,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 
 	if requestID == "" {
 		log.Printf("request_id missing")
-		responseError.AddError(ErrorDetail{Field: "request_id", Issue: "Field missing"})
+		responseError.AddErrorDetail(ErrorDetail{Field: "request_id", Issue: "Field missing"})
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    responseNameBadRequest,
@@ -23,9 +23,11 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		}
 		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, res)
-		log.Printf("NULL - Response: %#v", res)
+		log.Printf("NULL - Request: %+v", req)
+		log.Printf("NULL - Response: %+v", res)
 		return
 	}
+	log.Printf("%s - Request: %+v", requestID, req)
 
 	if err := render.DecodeJSON(r.Body, &req); err != nil {
 		log.Printf("Cannot decode json")
@@ -40,9 +42,22 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if responseError := validateCreateMemberRequest(req); len(responseError.Details) != 0 {
+		log.Printf("%s - validateCreateMemberRequest: Failed", requestID)
+		res.Status = statusFail
+		res.Error = &Error{
+			Name:    responseNameBadRequest,
+			Details: responseError.Details,
+		}
+		render.Status(r, http.StatusBadRequest)
+		render.JSON(w, r, res)
+		log.Printf("%s - Response: %+v", requestID, res)
+		return
+	}
+
 	res.Status = statusSuccess
 	render.Status(r, http.StatusCreated)
 	render.JSON(w, r, res)
-	log.Printf("%s - Response: %#v", requestID, res)
+	log.Printf("%s - Response: %+v", requestID, res)
 	return
 }
