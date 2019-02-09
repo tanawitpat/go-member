@@ -14,7 +14,12 @@ func main() {
 	if err := app.InitConfig(); err != nil {
 		panic(err)
 	}
-	log.Println("Initial Config: ", app.CFG)
+	log.Println("Initial config: ", app.CFG)
+
+	if err := app.InitErrorMessage(); err != nil {
+		panic(err)
+	}
+	log.Println("Initial error message: ", app.EM)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/ping", pingpong.PingPong).Methods("GET")
