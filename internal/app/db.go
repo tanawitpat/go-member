@@ -7,17 +7,12 @@ import (
 )
 
 func GetMongoSession() (*mgo.Database, error) {
-	MongoDBHost := "localhost:27017"
-	AuthDatabase := "admin"
-	AuthUserName := "admin"
-	AuthPassword := "passw0rd"
-
 	mongoDBDialInfo := &mgo.DialInfo{
-		Addrs:    []string{MongoDBHost},
-		Timeout:  10 * time.Second,
-		Database: AuthDatabase,
-		Username: AuthUserName,
-		Password: AuthPassword,
+		Addrs:    []string{CFG.MongoDB.MongoDBHost},
+		Timeout:  CFG.MongoDB.Timeout * time.Second,
+		Database: CFG.MongoDB.AuthDatabase,
+		Username: CFG.MongoDB.Username,
+		Password: CFG.MongoDB.Password,
 	}
 
 	session, err := mgo.DialWithInfo(mongoDBDialInfo)

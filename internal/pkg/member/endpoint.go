@@ -19,7 +19,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		responseError.AddErrorDetail(ErrorDetail{Field: "request_id", Issue: "Field missing"})
 		res.Status = statusFail
 		res.Error = &Error{
-			Name:    responseNameBadRequest,
+			Name:    app.EM.Internal.BadRequest.Name,
 			Details: responseError.Details,
 		}
 		render.Status(r, http.StatusBadRequest)
@@ -33,7 +33,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Cannot decode json")
 		res.Status = statusFail
 		res.Error = &Error{
-			Name:    responseNameBadRequest,
+			Name:    app.EM.Internal.BadRequest.Name,
 			Details: responseError.Details,
 		}
 		render.Status(r, http.StatusBadRequest)
@@ -48,7 +48,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%+v", err)
 		res.Status = statusFail
 		res.Error = &Error{
-			Name:    responseNameInternalServerError,
+			Name:    app.EM.Internal.InternalServerError.Name,
 			Details: responseError.Details,
 		}
 		render.Status(r, http.StatusInternalServerError)
@@ -61,7 +61,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s - validateCreateMemberRequest: Failed", requestID)
 		res.Status = statusFail
 		res.Error = &Error{
-			Name:    responseNameBadRequest,
+			Name:    app.EM.Internal.BadRequest.Name,
 			Details: responseError.Details,
 		}
 		render.Status(r, http.StatusBadRequest)
