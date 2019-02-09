@@ -4,7 +4,8 @@ const (
 	statusSuccess = "SUCCEEDED"
 	statusFail    = "FAILED"
 
-	responseNameBadRequest = "BAD_REQUEST"
+	responseNameBadRequest          = "BAD_REQUEST"
+	responseNameInternalServerError = "INTERNAL_SERVER_ERROR"
 )
 
 type Member struct {
