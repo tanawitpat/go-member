@@ -97,7 +97,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 			Province:      req.Address.Province,
 			PostalCode:    req.Address.PostalCode,
 		},
-		AccountStatus: "ACTIVE",
+		AccountStatus: accountStatusActive,
 	}
 
 	if err := db.C("member").Insert(member); err != nil {

@@ -1,8 +1,10 @@
 package member
 
 const (
-	statusSuccess = "SUCCEEDED"
-	statusFail    = "FAILED"
+	statusSuccess       = "SUCCEEDED"
+	statusFail          = "FAILED"
+	accountStatusActive = "ACTIVE"
+	accountStatusBanned = "BANNED"
 )
 
 type Member struct {
