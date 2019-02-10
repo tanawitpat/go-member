@@ -30,7 +30,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := render.DecodeJSON(r.Body, &req); err != nil {
-		log.Printf("Cannot decode json")
+		log.Printf("%s - Cannot decode json", requestID)
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.BadRequest.Name,
@@ -45,7 +45,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 
 	db, err := app.GetMongoSession()
 	if err != nil {
-		log.Printf("%+v", err)
+		log.Printf("%s - Cannot get mongo session: %+v", requestID, err)
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.InternalServerError.Name,
@@ -70,8 +70,22 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	CustomerID, err := genCustomerID(db)
+	if err != nil {
+		log.Printf("%s - Cannot generate customer ID: %+v", requestID, err)
+		res.Status = statusFail
+		res.Error = &Error{
+			Name:    app.EM.Internal.InternalServerError.Name,
+			Details: responseError.Details,
+		}
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, res)
+		log.Printf("%s - Response: %+v", requestID, res)
+		return
+	}
+
 	member := Member{
-		CustomerID:   "1",
+		CustomerID:   CustomerID,
 		FirstName:    req.FirstName,
 		LastName:     req.LastName,
 		Email:        req.Email,
@@ -83,7 +97,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 			Province:      req.Address.Province,
 			PostalCode:    req.Address.PostalCode,
 		},
-		AccountStatus: "ACTIVE",
+		AccountStatus: accountStatusActive,
 	}
 
 	if err := db.C("member").Insert(member); err != nil {

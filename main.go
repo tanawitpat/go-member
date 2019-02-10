@@ -2,12 +2,9 @@ package main
 
 import (
 	"go-member/internal/app"
-	"go-member/internal/pkg/member"
-	"go-member/internal/pkg/pingpong"
+	"go-member/internal/handler"
 	"log"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -21,10 +18,6 @@ func main() {
 	}
 	log.Println("Initial error message: ", app.EM)
 
-	router := mux.NewRouter()
-	router.HandleFunc("/ping", pingpong.PingPong).Methods("GET")
-	router.HandleFunc("/ping", pingpong.PingPongPost).Methods("POST")
-	router.HandleFunc("/member", member.CreateMemberAccount).Methods("POST")
-
+	router := handler.NewRouter()
 	log.Fatal(http.ListenAndServe(":8050", router))
 }
