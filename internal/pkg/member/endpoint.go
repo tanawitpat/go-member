@@ -45,7 +45,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 
 	db, err := app.GetMongoSession()
 	if err != nil {
-		log.Printf("%+v", err)
+		log.Printf("Cannot get mongo session: %+v", err)
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.InternalServerError.Name,
@@ -70,8 +70,22 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	CustomerID, err := genCustomerID(db)
+	if err != nil {
+		log.Printf("Cannot generate customer ID: %+v", err)
+		res.Status = statusFail
+		res.Error = &Error{
+			Name:    app.EM.Internal.InternalServerError.Name,
+			Details: responseError.Details,
+		}
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, res)
+		log.Printf("%s - Response: %+v", requestID, res)
+		return
+	}
+
 	member := Member{
-		CustomerID:   "1",
+		CustomerID:   CustomerID,
 		FirstName:    req.FirstName,
 		LastName:     req.LastName,
 		Email:        req.Email,

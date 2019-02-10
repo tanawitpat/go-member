@@ -49,3 +49,7 @@ type ErrorDetail struct {
 	Field string `bson:"field,omitempty" json:"field,omitempty"`
 	Issue string `bson:"issue,omitempty" json:"issue,omitempty"`
 }
+
+type IncrementIndex struct {
+	CustomerID int `bson:"customer_id"`
+}
