@@ -30,7 +30,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := render.DecodeJSON(r.Body, &req); err != nil {
-		log.Printf("Cannot decode json")
+		log.Printf("%s - Cannot decode json", requestID)
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.BadRequest.Name,
@@ -45,7 +45,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 
 	db, err := app.GetMongoSession()
 	if err != nil {
-		log.Printf("Cannot get mongo session: %+v", err)
+		log.Printf("%s - Cannot get mongo session: %+v", requestID, err)
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.InternalServerError.Name,
@@ -72,7 +72,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 
 	CustomerID, err := genCustomerID(db)
 	if err != nil {
-		log.Printf("Cannot generate customer ID: %+v", err)
+		log.Printf("%s - Cannot generate customer ID: %+v", requestID, err)
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.InternalServerError.Name,
