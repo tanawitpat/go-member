@@ -24,7 +24,7 @@ func validateCreateMemberRequest(req CreateMemberAccountRequest) Error {
 	if req.Email == "" {
 		responseError.AddErrorDetail(ErrorDetail{Field: "email", Issue: "Field missing"})
 	} else if !validateEmailFormat(req.Email) {
-		responseError.AddErrorDetail(ErrorDetail{Field: "email", Issue: "Email format is incorrect"})
+		responseError.AddErrorDetail(ErrorDetail{Field: "email", Issue: "email format is incorrect"})
 	}
 	return responseError
 }

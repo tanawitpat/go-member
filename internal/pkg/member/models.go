@@ -41,10 +41,8 @@ type Address struct {
 }
 
 type Error struct {
-	Name            string        `bson:"name,omitempty" json:"name,omitempty"`
-	Message         string        `bson:"message,omitempty" json:"message,omitempty"`
-	InformationLink string        `bson:"information_link,omitempty" json:"information_link,omitempty"`
-	Details         []ErrorDetail `bson:"details,omitempty" json:"details,omitempty"`
+	Name    string        `bson:"name,omitempty" json:"name,omitempty"`
+	Details []ErrorDetail `bson:"details,omitempty" json:"details,omitempty"`
 }
 
 type ErrorDetail struct {
