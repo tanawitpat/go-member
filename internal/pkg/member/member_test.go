@@ -49,7 +49,7 @@ func TestValidateCreateMemberRequestInvalidMobileNumber(t *testing.T) {
 func TestValidateCreateMemberRequestFirstNameMissing(t *testing.T) {
 	req := CreateMemberAccountRequest{
 		LastName:     "Pattanaveerangkoon",
-		MobileNumber: "0890000000",
+		MobileNumber: "028888888",
 		Email:        "abc@gmail.com",
 		Address: Address{
 			StreetAddress: "100/100 Yotha Rd.",
@@ -67,6 +67,22 @@ func TestValidateCreateMemberRequestFirstNameMissing(t *testing.T) {
 	}
 }
 
+func TestValidateCreateMemberRequestFirstNameLastNameEmailMissing(t *testing.T) {
+	req := CreateMemberAccountRequest{
+		MobileNumber: "023331111",
+		Address: Address{
+			StreetAddress: "100/100 Yotha Rd.",
+			Subdistrict:   "Talad Noi",
+			District:      "Samphanthawong",
+			Province:      "Bangkok",
+			PostalCode:    "10100",
+		},
+	}
+	responseError := validateCreateMemberRequest(req)
+	t.Log(responseError)
+	assert.Equal(t, 3, len(responseError.Details))
+}
+
 func TestValidateEmailFormatPositive(t *testing.T) {
 	testEmailInvalid := []string{"tanawit.p", "tanawit.pat@"}
 	for _, email := range testEmailInvalid {
@@ -76,7 +92,7 @@ func TestValidateEmailFormatPositive(t *testing.T) {
 }
 
 func TestValidateEmailFormatNegative(t *testing.T) {
-	testEmailValid := []string{"tanawit.p@kbtg.tech", "tanawit@kbtg.com", "tanawit@kbtg.in.th"}
+	testEmailValid := []string{"tanawit.p@google.tech", "tanawit@google.com", "tanawit@google.in.th"}
 	for _, email := range testEmailValid {
 		isValid := validateEmailFormat(email)
 		assert.Equal(t, true, isValid)
