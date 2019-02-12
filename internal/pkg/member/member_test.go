@@ -20,7 +20,6 @@ func TestValidateCreateMemberRequestInvalidMobileNumber(t *testing.T) {
 			PostalCode:    "10100",
 		},
 	}
-
 	responseError := validateCreateMemberRequest(req)
 	assert.Equal(t, 1, len(responseError.Details))
 	if len(responseError.Details) != 0 {
@@ -47,5 +46,19 @@ func TestValidateCreateMemberRequestFirstNameMissing(t *testing.T) {
 	if len(responseError.Details) != 0 {
 		assert.Equal(t, "first_name", responseError.Details[0].Field)
 		assert.Equal(t, "Field missing", responseError.Details[0].Issue)
+	}
+}
+
+func TestValidateEmailFormat(t *testing.T) {
+	testEmailInvalid := []string{"tanawit.p", "tanawit.pat@"}
+	for _, email := range testEmailInvalid {
+		isValid := validateEmailFormat(email)
+		assert.Equal(t, false, isValid)
+	}
+
+	testEmailValid := []string{"tanawit.p@kbtg.tech", "tanawit@kbtg.com", "tanawit@kbtg.in.th"}
+	for _, email := range testEmailValid {
+		isValid := validateEmailFormat(email)
+		assert.Equal(t, true, isValid)
 	}
 }

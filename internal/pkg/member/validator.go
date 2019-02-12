@@ -31,7 +31,7 @@ func validateCreateMemberRequest(req CreateMemberAccountRequest) Error {
 
 func validateEmailFormat(input string) bool {
 	input = strings.ToLower(input)
-	regex := regexp.MustCompile("^[a-z0-9_%+]+[.\\-]?[a-z0-9]+@[a-z0-9\\-]+\\.[a-z]{2,4}$")
+	regex := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 	return regex.MatchString(input)
 }
 
