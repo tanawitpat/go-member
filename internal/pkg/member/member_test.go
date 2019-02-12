@@ -6,6 +6,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestValidateCreateMemberRequestPositive(t *testing.T) {
+	req := CreateMemberAccountRequest{
+		FirstName:    "Tanawit",
+		LastName:     "Pattanaveerangkoon",
+		MobileNumber: "028888888",
+		Email:        "abc@gmail.com",
+		Address: Address{
+			StreetAddress: "100/100 Yotha Rd.",
+			Subdistrict:   "Talad Noi",
+			District:      "Samphanthawong",
+			Province:      "Bangkok",
+			PostalCode:    "10100",
+		},
+	}
+	responseError := validateCreateMemberRequest(req)
+	assert.Equal(t, 0, len(responseError.Details))
+}
+
 func TestValidateCreateMemberRequestInvalidMobileNumber(t *testing.T) {
 	req := CreateMemberAccountRequest{
 		FirstName:    "Tanawit",
@@ -49,13 +67,15 @@ func TestValidateCreateMemberRequestFirstNameMissing(t *testing.T) {
 	}
 }
 
-func TestValidateEmailFormat(t *testing.T) {
+func TestValidateEmailFormatPositive(t *testing.T) {
 	testEmailInvalid := []string{"tanawit.p", "tanawit.pat@"}
 	for _, email := range testEmailInvalid {
 		isValid := validateEmailFormat(email)
 		assert.Equal(t, false, isValid)
 	}
+}
 
+func TestValidateEmailFormatNegative(t *testing.T) {
 	testEmailValid := []string{"tanawit.p@kbtg.tech", "tanawit@kbtg.com", "tanawit@kbtg.in.th"}
 	for _, email := range testEmailValid {
 		isValid := validateEmailFormat(email)
