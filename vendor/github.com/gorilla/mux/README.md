@@ -385,7 +385,7 @@ func main() {
     // Run our server in a goroutine so that it doesn't block.
     go func() {
         if err := srv.ListenAndServe(); err != nil {
-            log.Println(err)
+            log.Infof(err)
         }
     }()
 
@@ -406,7 +406,7 @@ func main() {
     // Optionally, you could run srv.Shutdown in a goroutine and block on
     // <-ctx.Done() if your application should wait for other services
     // to finalize based on context cancellation.
-    log.Println("shutting down")
+    log.Infof("shutting down")
     os.Exit(0)
 }
 ```
@@ -430,7 +430,7 @@ A very basic middleware which logs the URI of the request being handled could be
 func loggingMiddleware(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         // Do stuff here
-        log.Println(r.RequestURI)
+        log.Infof(r.RequestURI)
         // Call the next handler, which can be another middleware in the chain, or the final handler.
         next.ServeHTTP(w, r)
     })

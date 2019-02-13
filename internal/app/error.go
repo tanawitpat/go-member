@@ -1,8 +1,6 @@
 package app
 
 import (
-	"log"
-
 	"github.com/spf13/viper"
 )
 
@@ -14,12 +12,12 @@ func InitErrorMessage() error {
 	v.SetConfigName("error")
 
 	if err := v.ReadInConfig(); err != nil {
-		log.Println("Read config file error:", err)
+		log.Infof("Read config file error: %+v", err)
 		return err
 	}
 
 	if err := bindingErrorMessage(v, EM); err != nil {
-		log.Println("Binding config error:", err)
+		log.Infof("Binding config error: %+v", err)
 		return err
 	}
 	return nil
@@ -27,7 +25,7 @@ func InitErrorMessage() error {
 
 func bindingErrorMessage(vp *viper.Viper, em *ErrorMessage) error {
 	if err := vp.Unmarshal(&em); err != nil {
-		log.Println("Unmarshal config error:", err)
+		log.Infof("Unmarshal config error: %+v", err)
 		return err
 	}
 	return nil

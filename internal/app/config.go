@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/spf13/viper"
@@ -28,12 +27,12 @@ func InitConfig() error {
 	v.SetConfigName(configName)
 
 	if err := v.ReadInConfig(); err != nil {
-		log.Println("Read config file error:", err)
+		log.Infof("Read config file error: %+v", err)
 		return err
 	}
 
 	if err := bindingConfig(v, CFG); err != nil {
-		log.Println("Binding config error:", err)
+		log.Infof("Binding config error: %+v", err)
 		return err
 	}
 	return nil
@@ -41,7 +40,7 @@ func InitConfig() error {
 
 func bindingConfig(vp *viper.Viper, cfg *Configs) error {
 	if err := vp.Unmarshal(&cfg); err != nil {
-		log.Println("Unmarshal config error:", err)
+		log.Infof("Unmarshal config error: %+v", err)
 		return err
 	}
 	return nil
