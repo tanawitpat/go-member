@@ -2,13 +2,13 @@ package member
 
 import (
 	"go-member/internal/app"
-	"log"
 	"net/http"
 
 	"github.com/go-chi/render"
 )
 
 func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
+	log := app.InitLogger()
 	req := CreateMemberAccountRequest{}
 	res := CreateMemberAccountResponse{}
 	responseError := Error{}

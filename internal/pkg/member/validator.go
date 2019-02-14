@@ -24,14 +24,14 @@ func validateCreateMemberRequest(req CreateMemberAccountRequest) Error {
 	if req.Email == "" {
 		responseError.AddErrorDetail(ErrorDetail{Field: "email", Issue: "Field missing"})
 	} else if !validateEmailFormat(req.Email) {
-		responseError.AddErrorDetail(ErrorDetail{Field: "email", Issue: "Email format is incorrect"})
+		responseError.AddErrorDetail(ErrorDetail{Field: "email", Issue: "email format is incorrect"})
 	}
 	return responseError
 }
 
 func validateEmailFormat(input string) bool {
 	input = strings.ToLower(input)
-	regex := regexp.MustCompile("^[a-z0-9_%+]+[.\\-]?[a-z0-9]+@[a-z0-9\\-]+\\.[a-z]{2,4}$")
+	regex := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 	return regex.MatchString(input)
 }
 
