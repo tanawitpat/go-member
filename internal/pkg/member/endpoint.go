@@ -44,6 +44,22 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Infof("Request: %+v", req)
 
+	session, err := app.GetMongoSession()
+	if err != nil {
+		log.Errorf("Cannot get mongo session")
+		res.Status = statusFail
+		res.Error = &Error{
+			Name:    app.EM.Internal.InternalServerError.Name,
+			Details: responseError.Details,
+		}
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, res)
+		log.Infof("Response: %#v", res)
+		return
+	}
+	defer session.Close()
+	db := session.DB(databaseMember)
+
 	if responseError := validateCreateMemberRequest(req); len(responseError.Details) != 0 {
 		log.Errorf("validateCreateMemberRequest failed")
 		res.Status = statusFail
@@ -57,7 +73,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	customerID, err := genCustomerID()
+	customerID, err := genCustomerID(db)
 	if err != nil {
 		log.Errorf("Cannot generate customer ID: %+v", err)
 		res.Status = statusFail
@@ -87,7 +103,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		AccountStatus: accountStatusActive,
 	}
 
-	if err := insertMemberDB(member); err != nil {
+	if err := db.C("member").Insert(member); err != nil {
 		log.Errorf("Cannot insert member to the database: %+v", err)
 		res.Status = statusFail
 		res.Error = &Error{
