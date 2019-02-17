@@ -3,18 +3,17 @@ package app
 import (
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/sirupsen/logrus"
 )
 
 var log = logrus.New()
-var environment = "dev"
+
+const env = "dev"
 
 // InitLogger is a function for initializing the logger for main.go file.
 func InitLogger() *logrus.Logger {
-	log.Out = os.Stdout
-	switch environment {
+	switch env {
 	case "dev":
 		log.Formatter = &logrus.TextFormatter{
 			TimestampFormat: "2006-01-02 15:04:05",
@@ -33,8 +32,7 @@ func InitLogger() *logrus.Logger {
 
 // InitLoggerEndpoint is a function for initializing the logger for endpoints.
 func InitLoggerEndpoint(r *http.Request) *logrus.Entry {
-	log.Out = os.Stdout
-	switch environment {
+	switch env {
 	case "dev":
 		log.Formatter = &logrus.TextFormatter{
 			TimestampFormat: "2006-01-02 15:04:05",
