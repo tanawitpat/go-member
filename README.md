@@ -99,20 +99,20 @@ Update customer's profile.
 | Parameters | Description | Values | Remark |
 | --- | --- | --- | --- |
 | **customer_id** | Customer ID | string | Required |
-| **first_name** | First name | string | Optional |
-| **last_name** | Last name  | string | Optional |
-| **mobile_number** | Mobile number  | string | Optional |
-| **email** | Email | string | Optional |
-| **address** | Address | Address object | Optional |
+| **first_name** | First name | string | Required |
+| **last_name** | Last name  | string | Required |
+| **mobile_number** | Mobile number  | string | Required |
+| **email** | Email | string | Required |
+| **address** | Address | Address object | Required |
 
 #### Address object
 | Parameters | Description | Values | Remark |
 | --- | --- | --- | --- |
-| **street_address** | Street address | string | Optional |
-| **subdistrict** | Subdistrict  | string | Optional |
-| **district** | District  | string | Optional |
-| **province** | Province | string | Optional |
-| **postal_code** | Postal code | string | Optional |
+| **street_address** | Street address | string | Required |
+| **subdistrict** | Subdistrict  | string | Required |
+| **district** | District  | string | Required |
+| **province** | Province | string | Required |
+| **postal_code** | Postal code | string | Required |
 
 ### Output
 Request status
@@ -128,8 +128,17 @@ with header
 with body
 {
     "customer_id": "1",
-    "mobile_number": "+66890001112",
-    "email": "def@gmail.com"
+    "first_name": "Tanawit",
+    "last_name": "Pattanaveerangkoon",
+    "mobile_number": "+66890001111",
+    "email": "abc@gmail.com",
+    "address": {
+        "street_address": "100/100 Yotha Rd.",
+        "subdistinct": "Talad Noi",
+        "distinct": "Samphanthawong",
+        "province": "Bangkok",
+        "postal_code": "10100"
+    }
 }
 
 > Success response
