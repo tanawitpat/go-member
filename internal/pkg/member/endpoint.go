@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/render"
-	"github.com/sirupsen/logrus"
 )
 
 func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
@@ -14,7 +13,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	responseError := Error{}
 
 	requestID := r.Header.Get("request_id")
-	log := app.InitLogger().WithFields(logrus.Fields{"request_id": requestID})
+	log := app.InitLoggerEndpoint(r)
 
 	if requestID == "" {
 		log.Errorf("request_id missing")
