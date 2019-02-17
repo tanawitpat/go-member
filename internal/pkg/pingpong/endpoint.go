@@ -7,7 +7,9 @@ import (
 )
 
 func PingPong(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("pong"))
+	render.Status(r, http.StatusOK)
+	render.JSON(w, r, "pong")
+	return
 }
 
 func PingPongPost(w http.ResponseWriter, r *http.Request) {
