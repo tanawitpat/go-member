@@ -5,16 +5,17 @@ import (
 	"net/http"
 
 	"github.com/go-chi/render"
+	"github.com/sirupsen/logrus"
 )
 
 func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
-	log := app.InitLogger()
 	req := CreateMemberAccountRequest{}
 	res := CreateMemberAccountResponse{}
 	responseError := Error{}
-	requestID := r.Header.Get("request_id")
 
+	requestID := r.Header.Get("request_id")
 	if requestID == "" {
+		log := app.InitLogger()
 		log.Printf("request_id missing")
 		responseError.AddErrorDetail(ErrorDetail{Field: "request_id", Issue: "Field missing"})
 		res.Status = statusFail
@@ -29,8 +30,10 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log := app.InitLogger().WithFields(logrus.Fields{"request_id": requestID})
+
 	if err := render.DecodeJSON(r.Body, &req); err != nil {
-		log.Printf("%s - Cannot decode json", requestID)
+		log.Printf("Cannot decode json")
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.BadRequest.Name,
@@ -38,13 +41,13 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		}
 		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, res)
-		log.Printf("%s - Response: %#v", requestID, res)
+		log.Printf("Response: %#v", res)
 		return
 	}
-	log.Printf("%s - Request: %+v", requestID, req)
+	log.Printf("Request: %+v", req)
 
 	if responseError := validateCreateMemberRequest(req); len(responseError.Details) != 0 {
-		log.Printf("%s - validateCreateMemberRequest: Failed", requestID)
+		log.Printf("validateCreateMemberRequest: Failed")
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.BadRequest.Name,
@@ -52,13 +55,13 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		}
 		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, res)
-		log.Printf("%s - Response: %+v", requestID, res)
+		log.Printf("Response: %+v", res)
 		return
 	}
 
 	customerID, err := genCustomerID()
 	if err != nil {
-		log.Printf("%s - Cannot generate customer ID: %+v", requestID, err)
+		log.Printf("Cannot generate customer ID: %+v", err)
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.InternalServerError.Name,
@@ -66,7 +69,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		}
 		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, res)
-		log.Printf("%s - Response: %+v", requestID, res)
+		log.Printf("Response: %+v", res)
 		return
 	}
 
@@ -87,7 +90,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := insertMemberDB(member); err != nil {
-		log.Printf("%s - Cannot insert member to the database: %+v", requestID, err)
+		log.Printf("Cannot insert member to the database: %+v", err)
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.InternalServerError.Name,
@@ -95,7 +98,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		}
 		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, res)
-		log.Printf("%s - Response: %+v", requestID, res)
+		log.Printf("Response: %+v", res)
 		return
 	}
 
@@ -106,6 +109,6 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	}
 	render.Status(r, http.StatusCreated)
 	render.JSON(w, r, res)
-	log.Printf("%s - Response: %+v", requestID, res)
+	log.Printf("Response: %+v", res)
 	return
 }
