@@ -5,6 +5,7 @@ const (
 	statusFail          = "FAILED"
 	accountStatusActive = "ACTIVE"
 	accountStatusBanned = "BANNED"
+	databaseMember      = "go-member"
 )
 
 type Member struct {

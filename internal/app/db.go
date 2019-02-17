@@ -6,7 +6,7 @@ import (
 	"github.com/globalsign/mgo"
 )
 
-func GetMongoSession() (*mgo.Database, error) {
+func GetMongoSession() (*mgo.Session, error) {
 	mongoDBDialInfo := &mgo.DialInfo{
 		Addrs:    []string{CFG.MongoDB.MongoDBHost},
 		Timeout:  CFG.MongoDB.Timeout * time.Second,
@@ -16,6 +16,5 @@ func GetMongoSession() (*mgo.Database, error) {
 	}
 
 	session, err := mgo.DialWithInfo(mongoDBDialInfo)
-	database := session.DB("go-member")
-	return database, err
+	return session, err
 }
