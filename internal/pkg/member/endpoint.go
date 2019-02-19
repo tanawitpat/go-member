@@ -18,7 +18,8 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	log := app.InitLoggerEndpoint(r)
 
 	if requestID == "" {
-		log.Errorf("request_id missing")
+		errorMessage := "request_id missing"
+		log.Errorf("%s", errorMessage)
 		responseError.AddErrorDetail(ErrorDetail{Field: "request_id", Issue: "Field missing"})
 		res.Status = statusFail
 		res.Error = &Error{
@@ -33,7 +34,8 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := render.DecodeJSON(r.Body, &req); err != nil {
-		log.Errorf("Cannot decode json")
+		errorMessage := "Cannot decode JSON"
+		log.Errorf("%s: %+v", errorMessage, err)
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.BadRequest.Name,
@@ -48,7 +50,8 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 
 	session, err := app.GetMongoSession()
 	if err != nil {
-		log.Errorf("Cannot get mongo session")
+		errorMessage := "Cannot get mongo session"
+		log.Errorf("%s: %+v", errorMessage, err)
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.InternalServerError.Name,
@@ -63,7 +66,8 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	db := session.DB(databaseMember)
 
 	if responseError := validateCreateMemberRequest(req); len(responseError.Details) != 0 {
-		log.Errorf("validateCreateMemberRequest failed")
+		errorMessage := "validateCreateMemberRequest failed"
+		log.Errorf("%s: %+v", errorMessage, err)
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.BadRequest.Name,
@@ -77,7 +81,8 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 
 	memberID, err := genCustomerID(db)
 	if err != nil {
-		log.Errorf("Cannot generate customer ID: %+v", err)
+		errorMessage := "Cannot generate customer ID"
+		log.Errorf("%s: %+v", errorMessage, err)
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.InternalServerError.Name,
@@ -90,7 +95,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	member := Member{
-		MemberID:   memberID,
+		MemberID:     memberID,
 		FirstName:    req.FirstName,
 		LastName:     req.LastName,
 		Email:        req.Email,
@@ -106,7 +111,8 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := db.C("member").Insert(member); err != nil {
-		log.Errorf("Cannot insert member to the database: %+v", err)
+		errorMessage := "Cannot insert member to the database"
+		log.Errorf("%s: %+v", errorMessage, err)
 		res.Status = statusFail
 		res.Error = &Error{
 			Name:    app.EM.Internal.InternalServerError.Name,
@@ -120,7 +126,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 
 	res = CreateMemberAccountResponse{
 		Status:        statusSuccess,
-		MemberID:    member.MemberID,
+		MemberID:      member.MemberID,
 		AccountStatus: member.AccountStatus,
 	}
 	render.Status(r, http.StatusCreated)
@@ -137,7 +143,8 @@ func InquiryMemberAccount(w http.ResponseWriter, r *http.Request) {
 
 	session, err := app.GetMongoSession()
 	if err != nil {
-		log.Errorf("Cannot get mongo session: %+v", err)
+		errorMessage := "Cannot get mongo session"
+		log.Errorf("%s: %+v", errorMessage, err)
 		res.Status = statusFail
 		res.Error = &Error{
 			Name: app.EM.Internal.InternalServerError.Name,
@@ -152,23 +159,20 @@ func InquiryMemberAccount(w http.ResponseWriter, r *http.Request) {
 
 	member := Member{}
 	if err := db.C("member").Find(bson.M{"member_id": urlParameter["memberID"]}).One(&member); err != nil {
+		errorMessage := "Cannot get member data from the database"
+		log.Errorf("%s: %+v", errorMessage, err)
+		res.Status = statusFail
 		if err.Error() == "not found" {
-			log.Errorf("Account not found: %+v", err)
-			res.Status = statusFail
 			res.Error = &Error{
 				Name: app.EM.Internal.AccountNotFound.Name,
 			}
 			render.Status(r, http.StatusOK)
-			render.JSON(w, r, res)
-			log.Infof("Response: %#v", res)
-			return
+		} else {
+			res.Error = &Error{
+				Name: app.EM.Internal.InternalServerError.Name,
+			}
+			render.Status(r, http.StatusInternalServerError)
 		}
-		log.Errorf("Cannot get member data from the database: %+v", err)
-		res.Status = statusFail
-		res.Error = &Error{
-			Name: app.EM.Internal.InternalServerError.Name,
-		}
-		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, res)
 		log.Infof("Response: %#v", res)
 		return
@@ -176,7 +180,7 @@ func InquiryMemberAccount(w http.ResponseWriter, r *http.Request) {
 
 	res = InquiryMemberAccountResponse{
 		Status:        statusSuccess,
-		MemberID:    urlParameter["memberID"],
+		MemberID:      urlParameter["memberID"],
 		FirstName:     member.FirstName,
 		LastName:      member.LastName,
 		Email:         member.Email,
