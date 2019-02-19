@@ -4,7 +4,7 @@
 | :--- | :---: | :--- | :--- |
 | CreateMemberAccount | `POST` | /member | Create customer's profile |
 | UpdateMemberAccount | `PUT` | /member | Update customer's profile |
-| InquiryMemberAccount | `GET` | /member/<customer_id> | Inquiry customer's profile by customer_id |
+| InquiryMemberAccount | `GET` | /member/<member_id> | Inquiry customer's profile by member_id |
 
 ## CreateMemberAccount
 
@@ -62,14 +62,14 @@ with body
 return value
 {
     "status": "SUCCEEDED",
-    "customer_id": "1",
+    "member_id": "1",
     "account_status": "ACTIVE"
 }
 
 > Fail response
 {
     "status": "FAILED",
-    "customer_id": "",
+    "member_id": "",
     "account_status": "",
     "error": {
         "name": "BAD_REQUEST",
@@ -98,21 +98,21 @@ Update customer's profile.
 ### Parameters
 | Parameters | Description | Values | Remark |
 | --- | --- | --- | --- |
-| **customer_id** | Customer ID | string | Required |
-| **first_name** | First name | string | Optional |
-| **last_name** | Last name  | string | Optional |
-| **mobile_number** | Mobile number  | string | Optional |
-| **email** | Email | string | Optional |
-| **address** | Address | Address object | Optional |
+| **member_id** | Customer ID | string | Required |
+| **first_name** | First name | string | Required |
+| **last_name** | Last name  | string | Required |
+| **mobile_number** | Mobile number  | string | Required |
+| **email** | Email | string | Required |
+| **address** | Address | Address object | Required |
 
 #### Address object
 | Parameters | Description | Values | Remark |
 | --- | --- | --- | --- |
-| **street_address** | Street address | string | Optional |
-| **subdistrict** | Subdistrict  | string | Optional |
-| **district** | District  | string | Optional |
-| **province** | Province | string | Optional |
-| **postal_code** | Postal code | string | Optional |
+| **street_address** | Street address | string | Required |
+| **subdistrict** | Subdistrict  | string | Required |
+| **district** | District  | string | Required |
+| **province** | Province | string | Required |
+| **postal_code** | Postal code | string | Required |
 
 ### Output
 Request status
@@ -127,9 +127,18 @@ with header
 }
 with body
 {
-    "customer_id": "1",
-    "mobile_number": "+66890001112",
-    "email": "def@gmail.com"
+    "member_id": "1",
+    "first_name": "Tanawit",
+    "last_name": "Pattanaveerangkoon",
+    "mobile_number": "+66890001111",
+    "email": "abc@gmail.com",
+    "address": {
+        "street_address": "100/100 Yotha Rd.",
+        "subdistinct": "Talad Noi",
+        "distinct": "Samphanthawong",
+        "province": "Bangkok",
+        "postal_code": "10100"
+    }
 }
 
 > Success response
@@ -163,19 +172,19 @@ return value
 Inquiry customer's profile.
 
 ### URL
-> GET /member/<customer_id>
+> GET /member/<member_id>
 
 ### Parameters
 | Parameters | Description | Values | Remark |
 | --- | --- | --- | --- |
-| **customer_id** | Customer ID | string | Required |
+| **member_id** | Customer ID | string | Required |
 
 ### Output
 Request status
 
 ### Sample Output
 ```
-> /customer/1
+> /member/1
 
 > Success response
 return value
@@ -212,8 +221,8 @@ return value
         "name": "ACCOUNT_NOT_FOUND",
         "details": [
             {
-                "field": "customer_id",
-                "issue": "customer_id does not exist"
+                "field": "member_id",
+                "issue": "member_id does not exist"
             }
         ]
     }

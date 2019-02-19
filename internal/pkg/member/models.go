@@ -9,7 +9,7 @@ const (
 )
 
 type Member struct {
-	CustomerID    string  `bson:"customer_id"`
+	MemberID    string  `bson:"member_id"`
 	FirstName     string  `bson:"first_name"`
 	LastName      string  `bson:"last_name"`
 	Email         string  `bson:"email"`
@@ -28,9 +28,21 @@ type CreateMemberAccountRequest struct {
 
 type CreateMemberAccountResponse struct {
 	Status        string `json:"status"`
-	CustomerID    string `json:"customer_id"`
+	MemberID    string `json:"member_id"`
 	AccountStatus string `json:"account_status"`
 	Error         *Error `json:"error,omitempty"`
+}
+
+type InquiryMemberAccountResponse struct {
+	Status        string  `json:"status"`
+	MemberID    string  `json:"member_id"`
+	FirstName     string  `json:"first_name"`
+	LastName      string  `json:"last_name"`
+	Email         string  `json:"email"`
+	MobileNumber  string  `json:"mobile_number"`
+	Address       Address `json:"address"`
+	AccountStatus string  `json:"account_status"`
+	Error         *Error  `json:"error,omitempty"`
 }
 
 type Address struct {
@@ -52,5 +64,5 @@ type ErrorDetail struct {
 }
 
 type IncrementIndex struct {
-	CustomerID int `bson:"customer_id"`
+	MemberID int `bson:"member_id"`
 }

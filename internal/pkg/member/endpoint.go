@@ -4,8 +4,9 @@ import (
 	"go-member/internal/app"
 	"net/http"
 
+	"github.com/globalsign/mgo/bson"
 	"github.com/go-chi/render"
-	"github.com/sirupsen/logrus"
+	"github.com/gorilla/mux"
 )
 
 func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
@@ -14,7 +15,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	responseError := Error{}
 
 	requestID := r.Header.Get("request_id")
-	log := app.InitLogger().WithFields(logrus.Fields{"request_id": requestID})
+	log := app.InitLoggerEndpoint(r)
 
 	if requestID == "" {
 		log.Errorf("request_id missing")
@@ -45,6 +46,22 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Infof("Request: %+v", req)
 
+	session, err := app.GetMongoSession()
+	if err != nil {
+		log.Errorf("Cannot get mongo session")
+		res.Status = statusFail
+		res.Error = &Error{
+			Name:    app.EM.Internal.InternalServerError.Name,
+			Details: responseError.Details,
+		}
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, res)
+		log.Infof("Response: %#v", res)
+		return
+	}
+	defer session.Close()
+	db := session.DB(databaseMember)
+
 	if responseError := validateCreateMemberRequest(req); len(responseError.Details) != 0 {
 		log.Errorf("validateCreateMemberRequest failed")
 		res.Status = statusFail
@@ -58,7 +75,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	customerID, err := genCustomerID()
+	memberID, err := genCustomerID(db)
 	if err != nil {
 		log.Errorf("Cannot generate customer ID: %+v", err)
 		res.Status = statusFail
@@ -73,7 +90,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	member := Member{
-		CustomerID:   customerID,
+		MemberID:   memberID,
 		FirstName:    req.FirstName,
 		LastName:     req.LastName,
 		Email:        req.Email,
@@ -88,7 +105,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		AccountStatus: accountStatusActive,
 	}
 
-	if err := insertMemberDB(member); err != nil {
+	if err := db.C("member").Insert(member); err != nil {
 		log.Errorf("Cannot insert member to the database: %+v", err)
 		res.Status = statusFail
 		res.Error = &Error{
@@ -103,10 +120,71 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 
 	res = CreateMemberAccountResponse{
 		Status:        statusSuccess,
-		CustomerID:    member.CustomerID,
+		MemberID:    member.MemberID,
 		AccountStatus: member.AccountStatus,
 	}
 	render.Status(r, http.StatusCreated)
+	render.JSON(w, r, res)
+	log.Infof("Response: %+v", res)
+	return
+}
+
+func InquiryMemberAccount(w http.ResponseWriter, r *http.Request) {
+	res := InquiryMemberAccountResponse{}
+	log := app.InitLoggerEndpoint(r)
+	urlParameter := mux.Vars(r)
+	res.MemberID = urlParameter["memberID"]
+
+	session, err := app.GetMongoSession()
+	if err != nil {
+		log.Errorf("Cannot get mongo session: %+v", err)
+		res.Status = statusFail
+		res.Error = &Error{
+			Name: app.EM.Internal.InternalServerError.Name,
+		}
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, res)
+		log.Infof("Response: %#v", res)
+		return
+	}
+	defer session.Close()
+	db := session.DB(databaseMember)
+
+	member := Member{}
+	if err := db.C("member").Find(bson.M{"member_id": urlParameter["memberID"]}).One(&member); err != nil {
+		if err.Error() == "not found" {
+			log.Errorf("Account not found: %+v", err)
+			res.Status = statusFail
+			res.Error = &Error{
+				Name: app.EM.Internal.AccountNotFound.Name,
+			}
+			render.Status(r, http.StatusOK)
+			render.JSON(w, r, res)
+			log.Infof("Response: %#v", res)
+			return
+		}
+		log.Errorf("Cannot get member data from the database: %+v", err)
+		res.Status = statusFail
+		res.Error = &Error{
+			Name: app.EM.Internal.InternalServerError.Name,
+		}
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, res)
+		log.Infof("Response: %#v", res)
+		return
+	}
+
+	res = InquiryMemberAccountResponse{
+		Status:        statusSuccess,
+		MemberID:    urlParameter["memberID"],
+		FirstName:     member.FirstName,
+		LastName:      member.LastName,
+		Email:         member.Email,
+		MobileNumber:  member.MobileNumber,
+		Address:       member.Address,
+		AccountStatus: member.AccountStatus,
+	}
+	render.Status(r, http.StatusOK)
 	render.JSON(w, r, res)
 	log.Infof("Response: %+v", res)
 	return

@@ -14,25 +14,25 @@ func (responseError *Error) AddErrorDetail(errorDetail ErrorDetail) []ErrorDetai
 }
 
 // genCustomerID is a function for generating customer ID using mongo increment feature
-func genCustomerID() (string, error) {
+func genCustomerID(db *mgo.Database) (string, error) {
 	doc := IncrementIndex{}
 	change := mgo.Change{
 		Update: bson.M{"$inc": bson.M{
-			"customer_id": 1,
+			"member_id": 1,
 		}},
 		ReturnNew: true,
 	}
 
-	err := applyMongoIncrement(change, &doc)
+	_, err := db.C("increment_index").Find(nil).Apply(change, &doc)
 	if err != nil {
 		if err.Error() == "not found" {
-			doc.CustomerID = 1
-			if err := createMongoIncrementCollection(doc); err != nil {
+			doc.MemberID = 1
+			if err := db.C("increment_index").Insert(doc); err != nil {
 				return "", err
 			}
 		} else {
 			return "", err
 		}
 	}
-	return strconv.Itoa(doc.CustomerID), nil
+	return strconv.Itoa(doc.MemberID), nil
 }
