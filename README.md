@@ -184,7 +184,7 @@ Request status
 
 ### Sample Output
 ```
-> /customer/1
+> /member/1
 
 > Success response
 return value
