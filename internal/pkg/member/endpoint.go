@@ -75,7 +75,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	customerID, err := genCustomerID(db)
+	memberID, err := genCustomerID(db)
 	if err != nil {
 		log.Errorf("Cannot generate customer ID: %+v", err)
 		res.Status = statusFail
@@ -90,7 +90,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	member := Member{
-		CustomerID:   customerID,
+		MemberID:   memberID,
 		FirstName:    req.FirstName,
 		LastName:     req.LastName,
 		Email:        req.Email,
@@ -120,7 +120,7 @@ func CreateMemberAccount(w http.ResponseWriter, r *http.Request) {
 
 	res = CreateMemberAccountResponse{
 		Status:        statusSuccess,
-		CustomerID:    member.CustomerID,
+		MemberID:    member.MemberID,
 		AccountStatus: member.AccountStatus,
 	}
 	render.Status(r, http.StatusCreated)
@@ -133,7 +133,7 @@ func InquiryMemberAccount(w http.ResponseWriter, r *http.Request) {
 	res := InquiryMemberAccountResponse{}
 	log := app.InitLoggerEndpoint(r)
 	urlParameter := mux.Vars(r)
-	res.CustomerID = urlParameter["customerID"]
+	res.MemberID = urlParameter["memberID"]
 
 	session, err := app.GetMongoSession()
 	if err != nil {
@@ -151,7 +151,7 @@ func InquiryMemberAccount(w http.ResponseWriter, r *http.Request) {
 	db := session.DB(databaseMember)
 
 	member := Member{}
-	if err := db.C("member").Find(bson.M{"customer_id": urlParameter["customerID"]}).One(&member); err != nil {
+	if err := db.C("member").Find(bson.M{"member_id": urlParameter["memberID"]}).One(&member); err != nil {
 		if err.Error() == "not found" {
 			log.Errorf("Account not found: %+v", err)
 			res.Status = statusFail
@@ -176,7 +176,7 @@ func InquiryMemberAccount(w http.ResponseWriter, r *http.Request) {
 
 	res = InquiryMemberAccountResponse{
 		Status:        statusSuccess,
-		CustomerID:    urlParameter["customerID"],
+		MemberID:    urlParameter["memberID"],
 		FirstName:     member.FirstName,
 		LastName:      member.LastName,
 		Email:         member.Email,

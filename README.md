@@ -4,7 +4,7 @@
 | :--- | :---: | :--- | :--- |
 | CreateMemberAccount | `POST` | /member | Create customer's profile |
 | UpdateMemberAccount | `PUT` | /member | Update customer's profile |
-| InquiryMemberAccount | `GET` | /member/<customer_id> | Inquiry customer's profile by customer_id |
+| InquiryMemberAccount | `GET` | /member/<member_id> | Inquiry customer's profile by member_id |
 
 ## CreateMemberAccount
 
@@ -62,14 +62,14 @@ with body
 return value
 {
     "status": "SUCCEEDED",
-    "customer_id": "1",
+    "member_id": "1",
     "account_status": "ACTIVE"
 }
 
 > Fail response
 {
     "status": "FAILED",
-    "customer_id": "",
+    "member_id": "",
     "account_status": "",
     "error": {
         "name": "BAD_REQUEST",
@@ -98,7 +98,7 @@ Update customer's profile.
 ### Parameters
 | Parameters | Description | Values | Remark |
 | --- | --- | --- | --- |
-| **customer_id** | Customer ID | string | Required |
+| **member_id** | Customer ID | string | Required |
 | **first_name** | First name | string | Required |
 | **last_name** | Last name  | string | Required |
 | **mobile_number** | Mobile number  | string | Required |
@@ -127,7 +127,7 @@ with header
 }
 with body
 {
-    "customer_id": "1",
+    "member_id": "1",
     "first_name": "Tanawit",
     "last_name": "Pattanaveerangkoon",
     "mobile_number": "+66890001111",
@@ -172,12 +172,12 @@ return value
 Inquiry customer's profile.
 
 ### URL
-> GET /member/<customer_id>
+> GET /member/<member_id>
 
 ### Parameters
 | Parameters | Description | Values | Remark |
 | --- | --- | --- | --- |
-| **customer_id** | Customer ID | string | Required |
+| **member_id** | Customer ID | string | Required |
 
 ### Output
 Request status
@@ -221,8 +221,8 @@ return value
         "name": "ACCOUNT_NOT_FOUND",
         "details": [
             {
-                "field": "customer_id",
-                "issue": "customer_id does not exist"
+                "field": "member_id",
+                "issue": "member_id does not exist"
             }
         ]
     }

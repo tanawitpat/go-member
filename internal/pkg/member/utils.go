@@ -18,7 +18,7 @@ func genCustomerID(db *mgo.Database) (string, error) {
 	doc := IncrementIndex{}
 	change := mgo.Change{
 		Update: bson.M{"$inc": bson.M{
-			"customer_id": 1,
+			"member_id": 1,
 		}},
 		ReturnNew: true,
 	}
@@ -26,7 +26,7 @@ func genCustomerID(db *mgo.Database) (string, error) {
 	_, err := db.C("increment_index").Find(nil).Apply(change, &doc)
 	if err != nil {
 		if err.Error() == "not found" {
-			doc.CustomerID = 1
+			doc.MemberID = 1
 			if err := db.C("increment_index").Insert(doc); err != nil {
 				return "", err
 			}
@@ -34,5 +34,5 @@ func genCustomerID(db *mgo.Database) (string, error) {
 			return "", err
 		}
 	}
-	return strconv.Itoa(doc.CustomerID), nil
+	return strconv.Itoa(doc.MemberID), nil
 }

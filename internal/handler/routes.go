@@ -12,6 +12,6 @@ func NewRouter() *mux.Router {
 	router.HandleFunc("/ping", pingpong.PingPong).Methods("GET")
 	router.HandleFunc("/ping", pingpong.PingPongPost).Methods("POST")
 	router.HandleFunc("/member", member.CreateMemberAccount).Methods("POST")
-	router.HandleFunc("/member/{customerID}", member.InquiryMemberAccount).Methods("GET")
+	router.HandleFunc("/member/{memberID}", member.InquiryMemberAccount).Methods("GET")
 	return router
 }
