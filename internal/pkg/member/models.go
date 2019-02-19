@@ -33,6 +33,18 @@ type CreateMemberAccountResponse struct {
 	Error         *Error `json:"error,omitempty"`
 }
 
+type InquiryMemberAccountResponse struct {
+	Status        string  `json:"status"`
+	CustomerID    string  `json:"customer_id"`
+	FirstName     string  `json:"first_name"`
+	LastName      string  `json:"last_name"`
+	Email         string  `json:"email"`
+	MobileNumber  string  `json:"mobile_number"`
+	Address       Address `json:"address"`
+	AccountStatus string  `json:"account_status"`
+	Error         *Error  `json:"error,omitempty"`
+}
+
 type Address struct {
 	StreetAddress string `bson:"street_address" json:"street_address"`
 	Subdistrict   string `bson:"subdistrict" json:"subdistrict"`

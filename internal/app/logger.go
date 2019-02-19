@@ -11,7 +11,7 @@ var log = logrus.New()
 
 const env = "dev"
 
-// InitLogger is a function for initializing the logger for main.go file.
+// InitLogger is a function for initializing a logger for main.go file.
 func InitLogger() *logrus.Logger {
 	switch env {
 	case "dev":
@@ -30,7 +30,7 @@ func InitLogger() *logrus.Logger {
 	return log
 }
 
-// InitLoggerEndpoint is a function for initializing the logger for endpoints.
+// InitLoggerEndpoint is a function for initializing a logger for endpoints.
 func InitLoggerEndpoint(r *http.Request) *logrus.Entry {
 	switch env {
 	case "dev":

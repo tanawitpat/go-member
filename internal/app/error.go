@@ -41,6 +41,10 @@ type ErrorMessage struct {
 			Name    string `mapstructure:"name"`
 			Details []ErrorDetail
 		} `mapstructure:"bad_request"`
+		AccountNotFound struct {
+			Name    string `mapstructure:"name"`
+			Details []ErrorDetail
+		} `mapstructure:"account_not_found"`
 	} `mapstructure:"internal"`
 }
 
